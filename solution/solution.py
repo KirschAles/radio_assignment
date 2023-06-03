@@ -1,5 +1,6 @@
 from sys import argv
 from argparse import ArgumentParser
+from argparse import Namespace
 from os import environ
 from os import getcwd
 
@@ -10,7 +11,7 @@ OUTPUT_ENV = 'TARGET_DIRECTORY'
 INPUT_ENV = 'SOURCE_DIRECTORY'
 
 
-def get_file_name(inputted, env_name):
+def get_file_name(inputted: str, env_name: str) -> str:
     if inputted is not None:
         return inputted
     name = environ.get(env_name)
@@ -20,7 +21,7 @@ def get_file_name(inputted, env_name):
     return getcwd()
 
 
-def parse_input():
+def parse_input() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument('-i', '--input', help="Directory, from which is input taken.")
     parser.add_argument('-o', '--output', help="Directory, where to put output.")
@@ -29,7 +30,7 @@ def parse_input():
     return parser.parse_args()
 
 
-def main():
+def main() -> int:
     args = parse_input()
     if args.version:
         print(PROGRAM_NAME, VERSION)
@@ -40,6 +41,7 @@ def main():
 
 
     return 0
+
 
 if __name__ == "__main__":
     main()
