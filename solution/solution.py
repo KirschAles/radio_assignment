@@ -15,6 +15,13 @@ INPUT_ENV = 'SOURCE_DIRECTORY'
 DATE = 'date'
 
 
+def print_dir(directory: dir) -> None:
+    print("{'source': ", end='')
+    print(f"'{directory['source']}', ", end='')
+    print(f"'target': '{directory['target']}'", end='')
+    print('}')
+
+
 def get_target(filename: str) -> str:
     index = filename.find('-') + 1
     new_name = filename[index:]
@@ -58,7 +65,7 @@ def main() -> int:
         directory['source'] = file_path
         output_name = str(os.path.join(output_dir, get_target(filename)))
         directory['target'] = output_name
-        print(directory)
+        print_dir(directory)
 
     return 0
 
