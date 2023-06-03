@@ -1,10 +1,10 @@
 from setuptools import setup
-
-PROGRAM_NAME = "program"
+from solution import PROGRAM_NAME
+from solution import VERSION
 
 setup(
     name=PROGRAM_NAME,
-    version="1.0.0",
+    version=VERSION,
     py_modules=["solution"],
     entry_points={
         "console_scripts": [
