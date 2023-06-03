@@ -2,3 +2,5 @@
 source/*
 target/*
 .venv/
+#ignore IDE files
+.idea/*
