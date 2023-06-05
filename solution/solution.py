@@ -64,6 +64,20 @@ def parse_input() -> Namespace:
     return parser.parse_args()
 
 
+def do_dates_match(filename: str, source_path: str) -> bool:
+    index_date = filename.find('_')
+    date1 = date.fromisoformat(filename[:index_date])
+    with open(source_path, 'r') as file:
+        source_info = json.load(file)
+        date2 = date.fromisoformat(source_info['date'])
+    return date1 == date2
+
+
+def move_file(directory: dir, is_writing: bool) -> None:
+    if not is_writing:
+        return
+
+
 def main() -> int:
     args = parse_input()
     if args.version:
@@ -76,6 +90,7 @@ def main() -> int:
 
     files = [x for x in os.listdir(input_dir) if is_json(x)]
     print(f'Processing {len(files)} files...')
+    processed_files = 0
     for filename in files:
         directory = {}
         source_path = str(os.path.join(input_dir, filename))
@@ -84,7 +99,19 @@ def main() -> int:
         directory['target'] = target_path
         print_dir(directory)
 
-    return 0
+        if do_dates_match(filename, source_path):
+            processed_files += 1
+            move_file(directory, is_writing)
+        else:
+            print(f"Moving of file {source_path} failed.")
+
+    processed_all = processed_files == len(files)
+    first_word = 'Success'
+    if not processed_all:
+        first_word = 'Failure'
+
+    print(f"{first_word}: processed {processed_files}/{len(files)} files.")
+    return processed_all
 
 
 if __name__ == "__main__":
