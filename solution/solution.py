@@ -123,9 +123,10 @@ def move_file(directory: dir, is_writing: bool) -> bool:
         return False
 
     try:
+        os.makedirs(os.path.dirname(directory['target']), exist_ok=True)
         with open(directory['target'], 'w') as file:
             file.write(data)
-    except IOError:
+    except (IOError, OSError):
         writing_failed(directory['target'])
         return False
 
