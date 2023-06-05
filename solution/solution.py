@@ -24,6 +24,10 @@ UNKNOWN = '??'
 FILENAME_PATTERN = r"^\d{4}-\d{2}-\d{2}_\d{1}\.json$"
 
 
+def print_error(msg: str):
+    print(msg, file=sys.stderr)
+
+
 def print_dir(directory: dir) -> None:
     print("{'source': ", end='')
     print(f"'{directory['source']}', ", end='')
@@ -116,12 +120,12 @@ def can_access_file(file_path: str) -> bool:
 
 def can_process_file(source_path: str, filename: str) -> bool:
     if not is_filename_valid(filename):
-        print(f"Filename {filename} of file {source_path} is not valid.", file=sys.stderr)
+        print_error(f"Filename {filename} of file {source_path} is not valid.")
         return False
     try:
         date_filename = get_date_from_filename(filename)
     except ValueError:
-        print(f"Date from filename {filename} of file {source_path} is not valid.", file=sys.stderr)
+        print_error(f"Date from filename {filename} of file {source_path} is not valid.")
         return False
 
     try:
@@ -129,16 +133,16 @@ def can_process_file(source_path: str, filename: str) -> bool:
             json_info = json.load(file)
             date_json = date.fromisoformat(json_info['date'])
             if date_json != date_filename:
-                print(f"Date from filename {date_filename} and date from json {date_json} " +\
-                      f"of file {source_path} do not match.", file=sys.stderr)
+                print_error(f"Date from filename {date_filename} and date from json {date_json} " +\
+                            f"of file {source_path} do not match.")
                 return False
             return True
 
     except IOError:
-        print(f"File {source_path} couldn't be opened.", file=sys.stderr)
+        print_error(f"File {source_path} couldn't be opened.")
         return False
     except json.JSONDecodeError:
-        print(f"File {source_path} is not valid JSON file.", file=sys.stderr)
+        print_error(f"File {source_path} is not valid JSON file.")
         return False
 
 
@@ -153,7 +157,7 @@ def main() -> int:
     is_writing = args.write
 
     files = os.listdir(input_dir)
-    print(f'Processing {len(files)} files...', file=sys.stderr)
+    print_error(f'Processing {len(files)} files...')
     processed_files = 0
     for filename in files:
         directory = {}
@@ -172,7 +176,7 @@ def main() -> int:
     if not processed_all:
         first_word = 'Failure'
 
-    print(f"{first_word}: processed {processed_files}/{len(files)} files.", file=sys.stderr)
+    print_error(f"{first_word}: processed {processed_files}/{len(files)} files.")
     return processed_all
 
 
