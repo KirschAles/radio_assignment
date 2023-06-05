@@ -203,8 +203,7 @@ def main() -> int:
         print_dir(directory)
 
         if can_process_file(source_path, filename):
-            move_file(directory, is_writing)
-            processed_files += 1
+            processed_files += move_file(directory, is_writing)
 
     processed_all = processed_files == len(files)
     first_word = 'Success'
