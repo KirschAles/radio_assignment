@@ -78,10 +78,10 @@ def main() -> int:
     print(f'Processing {len(files)} files...')
     for filename in files:
         directory = {}
-        file_path = str(os.path.join(input_dir, filename))
-        directory['source'] = file_path
-        output_name = str(os.path.join(output_dir, get_target(filename)))
-        directory['target'] = output_name
+        source_path = str(os.path.join(input_dir, filename))
+        directory['source'] = source_path
+        target_path = str(os.path.join(output_dir, get_target(filename)))
+        directory['target'] = target_path
         print_dir(directory)
 
     return 0
