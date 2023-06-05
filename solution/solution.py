@@ -14,12 +14,19 @@ INPUT_ENV = 'SOURCE_DIRECTORY'
 
 DATE = 'date'
 
+JSON = '.json'
+
 
 def print_dir(directory: dir) -> None:
     print("{'source': ", end='')
     print(f"'{directory['source']}', ", end='')
     print(f"'target': '{directory['target']}'", end='')
     print('}')
+
+
+def is_json(filename: str) -> bool:
+    last_dost = filename.rfind('.')
+    return filename[last_dost:] == JSON
 
 
 def get_target(filename: str) -> str:
@@ -57,7 +64,7 @@ def main() -> int:
     output_dir = get_file_name(args.output, OUTPUT_ENV)
     is_writing = args.write
 
-    files = os.listdir(input_dir)
+    files = [x for x in os.listdir(input_dir) if is_json(x)]
     print(f'Processing {len(files)} files...')
     for filename in files:
         directory = {}
