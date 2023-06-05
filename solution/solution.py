@@ -31,9 +31,13 @@ def print_dir(directory: dir) -> None:
     print('}')
 
 
-def is_json(filename: str) -> bool:
-    last_dost = filename.rfind('.')
-    return filename[last_dost:] == JSON
+def is_json(file_path: str) -> bool:
+    try:
+        with open(file_path) as f:
+            directory = json.load(f)
+    except json.JSONDecodeError:
+        return False
+    return True
 
 
 def get_date_from_filename(filename: str) -> date:
@@ -77,10 +81,7 @@ def parse_input() -> Namespace:
 
 def do_dates_match(filename: str, source_path: str) -> bool:
     index_date = filename.find('_')
-    try:
-        date1 = date.fromisoformat(filename[:index_date])
-    except ValueError:
-        return False
+    date1 = date.fromisoformat(filename[:index_date])
 
     try:
         with open(source_path, 'r') as file:
@@ -104,6 +105,43 @@ def is_filename_valid(filename: str) -> bool:
     return not re.match(FILENAME_PATTERN, filename) is None
 
 
+def can_access_file(file_path: str) -> bool:
+    try:
+        with open(file_path, 'r'):
+            pass
+    except IOError:
+        return False
+    return True
+
+
+def can_process_file(source_path: str, filename: str) -> bool:
+    if not is_filename_valid(filename):
+        print(f"Filename {filename} of file {source_path} is not valid.", file=sys.stderr)
+        return False
+    try:
+        date_filename = get_date_from_filename(filename)
+    except ValueError:
+        print(f"Date from filename {filename} of file {source_path} is not valid.", file=sys.stderr)
+        return False
+
+    try:
+        with open(source_path, 'r') as file:
+            json_info = json.load(file)
+            date_json = date.fromisoformat(json_info['date'])
+            if date_json != date_filename:
+                print(f"Date from filename {date_filename} and date from json {date_json} " +\
+                      f"of file {source_path} do not match.", file=sys.stderr)
+                return False
+            return True
+
+    except IOError:
+        print(f"File {source_path} couldn't be opened.", file=sys.stderr)
+        return False
+    except json.JSONDecodeError:
+        print(f"File {source_path} is not valid JSON file.", file=sys.stderr)
+        return False
+
+
 def main() -> int:
     args = parse_input()
     if args.version:
@@ -125,11 +163,9 @@ def main() -> int:
         directory['target'] = target_path
         print_dir(directory)
 
-        if is_filename_valid(filename) and do_dates_match(filename, source_path):
-            processed_files += 1
+        if can_process_file(source_path, filename):
             move_file(directory, is_writing)
-        else:
-            print(f"Moving of file {source_path} failed.", file=sys.stderr)
+            processed_files += 1
 
     processed_all = processed_files == len(files)
     first_word = 'Success'
