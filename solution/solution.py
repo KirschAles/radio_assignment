@@ -7,6 +7,7 @@ from os import getcwd
 import os
 import json
 from datetime import date
+import re
 
 
 PROGRAM_NAME = 'program'
@@ -20,6 +21,7 @@ WEEK_PREPOSITION = 'W'
 JSON = '.json'
 
 UNKNOWN = '??'
+FILENAME_PATTERN = r"^\d{4}-\d{2}-\d{2}_\d{1}\.json$"
 
 
 def print_dir(directory: dir) -> None:
@@ -75,16 +77,31 @@ def parse_input() -> Namespace:
 
 def do_dates_match(filename: str, source_path: str) -> bool:
     index_date = filename.find('_')
-    date1 = date.fromisoformat(filename[:index_date])
-    with open(source_path, 'r') as file:
-        source_info = json.load(file)
-        date2 = date.fromisoformat(source_info['date'])
+    try:
+        date1 = date.fromisoformat(filename[:index_date])
+    except ValueError:
+        return False
+
+    try:
+        with open(source_path, 'r') as file:
+            source_info = json.load(file)
+            date2 = date.fromisoformat(source_info['date'])
+    except IOError:
+        return False
+    except json.JSONDecodeError:
+        return False
+    except ValueError:
+        return False
     return date1 == date2
 
 
 def move_file(directory: dir, is_writing: bool) -> None:
     if not is_writing:
         return
+
+
+def is_filename_valid(filename: str) -> bool:
+    return not re.match(FILENAME_PATTERN, filename) is None
 
 
 def main() -> int:
@@ -97,7 +114,7 @@ def main() -> int:
     output_dir = get_file_name(args.output, OUTPUT_ENV)
     is_writing = args.write
 
-    files = [x for x in os.listdir(input_dir) if is_json(x)]
+    files = os.listdir(input_dir)
     print(f'Processing {len(files)} files...', file=sys.stderr)
     processed_files = 0
     for filename in files:
@@ -108,7 +125,7 @@ def main() -> int:
         directory['target'] = target_path
         print_dir(directory)
 
-        if do_dates_match(filename, source_path):
+        if is_filename_valid(filename) and do_dates_match(filename, source_path):
             processed_files += 1
             move_file(directory, is_writing)
         else:
