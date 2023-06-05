@@ -5,6 +5,7 @@ from os import environ
 from os import getcwd
 import os
 import json
+from datetime import date
 
 
 PROGRAM_NAME = 'program'
@@ -14,6 +15,7 @@ INPUT_ENV = 'SOURCE_DIRECTORY'
 
 DATE = 'date'
 
+WEEK_PREPOSITION = 'W'
 JSON = '.json'
 
 
@@ -29,10 +31,18 @@ def is_json(filename: str) -> bool:
     return filename[last_dost:] == JSON
 
 
+def get_date_from_filename(filename: str) -> date:
+    index_end = filename.find('_')
+    return date.fromisoformat(filename[:index_end])
+
+
 def get_target(filename: str) -> str:
     index = filename.find('-') + 1
     new_name = filename[index:]
-    return new_name
+    date1 = get_date_from_filename(filename)
+    year = str(date1.year)
+    week = WEEK_PREPOSITION + str(date1.isocalendar().week).zfill(2)
+    return os.path.join(year, week, new_name)
 
 
 def get_file_name(inputted: str, env_name: str) -> str:
