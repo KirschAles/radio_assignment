@@ -23,7 +23,7 @@ UNKNOWN = '??'
 FILENAME_PATTERN = r"^\d{4}-\d{2}-\d{2}_\d{1}\.json$"
 
 
-def print_error(msg: str):
+def print_error(msg: str) -> None:
     print(msg, file=sys.stderr)
 
 
