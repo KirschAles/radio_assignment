@@ -9,7 +9,7 @@ from datetime import date
 import re
 
 
-PROGRAM_NAME = 'program'
+PROGRAM_NAME = 'solution'
 VERSION = '1.0.0'
 OUTPUT_ENV = 'TARGET_DIRECTORY'
 INPUT_ENV = 'SOURCE_DIRECTORY'
