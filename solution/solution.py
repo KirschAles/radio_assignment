@@ -19,6 +19,8 @@ DATE = 'date'
 WEEK_PREPOSITION = 'W'
 JSON = '.json'
 
+UNKNOWN = '??'
+
 
 def print_dir(directory: dir) -> None:
     print("{'source': ", end='')
@@ -39,10 +41,16 @@ def get_date_from_filename(filename: str) -> date:
 
 def get_target(filename: str) -> str:
     index = filename.find('-') + 1
+    # exception here is impossible, at worst would get filename[0:]
     new_name = filename[index:]
-    date1 = get_date_from_filename(filename)
-    year = str(date1.year)
-    week = WEEK_PREPOSITION + str(date1.isocalendar().week).zfill(2)
+    try:
+        date1 = get_date_from_filename(filename)
+        year = str(date1.year)
+        week = WEEK_PREPOSITION + str(date1.isocalendar().week).zfill(2)
+    # using this, to avoid dispersing error handling to several places
+    except ValueError:
+        year = UNKNOWN
+        week = UNKNOWN
     return os.path.join(year, week, new_name)
 
 
