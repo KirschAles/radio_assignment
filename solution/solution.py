@@ -1,3 +1,4 @@
+import sys
 from sys import argv
 from argparse import ArgumentParser
 from argparse import Namespace
@@ -89,7 +90,7 @@ def main() -> int:
     is_writing = args.write
 
     files = [x for x in os.listdir(input_dir) if is_json(x)]
-    print(f'Processing {len(files)} files...')
+    print(f'Processing {len(files)} files...', file=sys.stderr)
     processed_files = 0
     for filename in files:
         directory = {}
@@ -103,14 +104,14 @@ def main() -> int:
             processed_files += 1
             move_file(directory, is_writing)
         else:
-            print(f"Moving of file {source_path} failed.")
+            print(f"Moving of file {source_path} failed.", file=sys.stderr)
 
     processed_all = processed_files == len(files)
     first_word = 'Success'
     if not processed_all:
         first_word = 'Failure'
 
-    print(f"{first_word}: processed {processed_files}/{len(files)} files.")
+    print(f"{first_word}: processed {processed_files}/{len(files)} files.", file=sys.stderr)
     return processed_all
 
 
