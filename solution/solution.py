@@ -100,9 +100,44 @@ def do_dates_match(filename: str, source_path: str) -> bool:
     return date1 == date2
 
 
-def move_file(directory: dir, is_writing: bool) -> None:
+def reading_failed(path: str) -> None:
+    print_error(f"Couldn't read from file {path}.")
+
+
+def writing_failed(path: str) -> None:
+    print_error(f"Couldn't write to file {path}.")
+
+
+def move_file(directory: dir, is_writing: bool) -> bool:
     if not is_writing:
-        return
+        return True
+    data = None
+    try:
+        with open(directory['source'], 'r') as file:
+            data = file.read()
+    except IOError:
+        reading_failed(directory['source'])
+        return False
+    if data is None:
+        reading_failed(directory['source'])
+        return False
+
+    try:
+        with open(directory['target'], 'w') as file:
+            file.write(data)
+    except IOError:
+        writing_failed(directory['target'])
+        return False
+
+    try:
+        os.remove(directory['source'])
+    except PermissionError:
+        print_error(f"File {directory['source']} couldn't be removed.")
+        # transaction failed, roll it back
+        os.remove(directory['target'])
+        return False
+    
+    return True
 
 
 def is_filename_valid(filename: str) -> bool:
