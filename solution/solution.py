@@ -1,5 +1,4 @@
 import sys
-from sys import argv
 from argparse import ArgumentParser
 from argparse import Namespace
 from os import environ
