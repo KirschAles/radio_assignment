@@ -69,7 +69,7 @@ def parse_input() -> Namespace:
     parser.add_argument('-i', '--input', help="Directory, from which is input taken.")
     parser.add_argument('-o', '--output', help="Directory, where to put output.")
     parser.add_argument('--version', '-v', action='store_true', help="Prints the version of the program.")
-    parser.add_argument('--write', '-w', action='store_true', help="Makes the operation for real.")
+    parser.add_argument('--write', '-w', action='store_true', help="Flags program to do the changes.")
     return parser.parse_args()
 
 
