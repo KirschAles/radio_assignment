@@ -34,15 +34,6 @@ def print_dir(directory: dir) -> None:
     print('}')
 
 
-def is_json(file_path: str) -> bool:
-    try:
-        with open(file_path) as f:
-            directory = json.load(f)
-    except json.JSONDecodeError:
-        return False
-    return True
-
-
 def get_date_from_filename(filename: str) -> date:
     index_end = filename.find('_')
     return date.fromisoformat(filename[:index_end])
@@ -144,15 +135,6 @@ def is_filename_valid(filename: str) -> bool:
     return not re.match(FILENAME_PATTERN, filename) is None
 
 
-def can_access_file(file_path: str) -> bool:
-    try:
-        with open(file_path, 'r'):
-            pass
-    except IOError:
-        return False
-    return True
-
-
 def can_process_file(source_path: str, filename: str) -> bool:
     if not is_filename_valid(filename):
         print_error(f"Filename {filename} of file {source_path} is not valid.")
@@ -168,7 +150,7 @@ def can_process_file(source_path: str, filename: str) -> bool:
             json_info = json.load(file)
             date_json = date.fromisoformat(json_info['date'])
             if date_json != date_filename:
-                print_error(f"Date from filename {date_filename} and date from json {date_json} " +\
+                print_error(f"Date from filename {date_filename} and date from json {date_json} " +
                             f"of file {source_path} do not match.")
                 return False
             return True
