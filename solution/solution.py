@@ -45,8 +45,9 @@ def get_target(filename: str) -> str:
     new_name = filename[index:]
     try:
         date1 = get_date_from_filename(filename)
-        year = str(date1.year)
-        week = WEEK_PREPOSITION + str(date1.isocalendar().week).zfill(2)
+        year, week, _ = date1.isocalendar()
+        year = str(year)
+        week = WEEK_PREPOSITION + str(week).zfill(2)
     # using this, to avoid dispersing error handling to several places
     except ValueError:
         year = UNKNOWN
